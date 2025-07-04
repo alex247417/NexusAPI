@@ -41,5 +41,35 @@ app.MapPost("/projects", async (Project project, ProjectDbContext db) =>
 
     return Results.Created($"/projects/{project.Id}", project);
 });
+app.MapPut("/projects/{id}", async (int id, Project updatedProject, ProjectDbContext db) =>
+{
+    var project = await db.Projects.FindAsync(id);
+
+    if (project is null)
+    {
+        return Results.NotFound();
+    }
+
+    project.Name = updatedProject.Name;
+    project.Description = updatedProject.Description;
+
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+});
+app.MapDelete("/projects/{id}", async (int id, ProjectDbContext db) =>
+{
+    var project = await db.Projects.FindAsync(id);
+
+    if (project is null)
+    {
+        return Results.NotFound();
+    }
+
+    db.Projects.Remove(project);
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+});
 app.Run();
 
