@@ -34,5 +34,12 @@ app.MapGet("/projects/{id}", async (int id, ProjectDbContext db) =>
 
     return project is null ? Results.NotFound() : Results.Ok(project);
 });
+app.MapPost("/projects", async (Project project, ProjectDbContext db) =>
+{
+    db.Projects.Add(project);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/projects/{project.Id}", project);
+});
 app.Run();
 
