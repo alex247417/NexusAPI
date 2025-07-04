@@ -13,6 +13,12 @@ builder.Services.AddDbContext<ProjectDbContext>(options =>
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+// Bloco para garantir que o banco de dados seja criado ao iniciar
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ProjectDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
