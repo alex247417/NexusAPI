@@ -23,5 +23,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapGet("/projects", async (ProjectDbContext db) =>
+{
+    var projects = await db.Projects.ToListAsync();
+    return Results.Ok(projects);
+});
+app.MapGet("/projects/{id}", async (int id, ProjectDbContext db) =>
+{
+    var project = await db.Projects.FindAsync(id);
+
+    return project is null ? Results.NotFound() : Results.Ok(project);
+});
 app.Run();
 
